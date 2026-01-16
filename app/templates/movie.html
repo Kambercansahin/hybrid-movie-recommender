@@ -5,23 +5,23 @@
   <title>{{ movie.title }} - MovieRecs</title>
   <link rel="stylesheet" href="/static/style.css">
   <style>
-    /* Temel Ayarlar */
+    /* */
     body { background-color: #111827; color: white; margin: 0; padding: 0; font-family: sans-serif; }
     .topbar { background-color: #1f2937; padding: 10px 40px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #374151; }
     .nav-links a { color: #fbbf24; text-decoration: none; margin-right: 20px; font-weight: bold; font-size: 0.9rem; }
     .back-btn { background: #374151; padding: 5px 15px; border-radius: 5px; color: white !important; }
 
-    /* Film Detay Alanı */
+    /* */
     .movie-page-container { display: flex; gap: 40px; padding: 30px; background: #1f2937; border-radius: 15px; margin: 20px auto; max-width: 1100px; }
     .poster-box img.poster-main { width: 260px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); object-fit: cover; }
     .movie-details-info h2 { font-size: 2.2rem; color: #fbbf24; margin-top: 0; }
     .rating-summary { font-size: 1.1rem; color: #fbbf24; margin-bottom: 20px; }
 
-    /* Özet Alanı */
+    /*  */
     .overview-section h3 { border-bottom: 1px solid #4b5563; padding-bottom: 8px; margin-top: 0; font-size: 1.2rem; }
     .overview-text { line-height: 1.5; color: #d1d5db; margin-bottom: 25px; font-size: 0.95rem; }
 
-    /* Oylama Kutusu */
+    /*  */
     .rating-box { background: #111827; padding: 15px; border-radius: 10px; margin-top: 15px; }
     .stars { display: flex; flex-direction: row-reverse; justify-content: flex-end; gap: 5px; margin-bottom: 10px; }
     .stars input { display: none; }
@@ -29,7 +29,7 @@
     .stars input:checked ~ label, .stars label:hover, .stars label:hover ~ label { color: #fbbf24; }
     .submit-btn { background: #fbbf24; color: black; border: none; padding: 8px 18px; border-radius: 5px; font-weight: bold; cursor: pointer; }
 
-    /* Alt Kısımdaki Öneriler - STANDART KART YAPISI */
+    /*  */
     .recommendations-title { margin: 30px 40px 10px 40px; padding-left: 12px; border-left: 4px solid #fbbf24; font-size: 1.3rem; }
     .movie-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 20px; padding: 0 40px 40px 40px; }
     .movie-card { background: #1f2937; border-radius: 10px; overflow: hidden; text-decoration: none; color: white; transition: transform 0.3s ease; display: flex; flex-direction: column; height: 100%; }
