@@ -1,0 +1,395 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MovieRecs - Cinematic Discovery</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <style>
+    /* Unified Cinematic Glassmorphism Styles */
+    :root {
+      --accent-color: #f59e0b;
+      --accent-hover: #fbbf24;
+      --glass-bg: rgba(30, 41, 59, 0.7);
+      --text-muted: #94a3b8;
+    }
+
+    body {
+      background: radial-gradient(circle at top right, #1e293b, #080d17);
+      min-height: 100vh;
+      color: white;
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+    }
+
+    /* --- TOPBAR & PREMIUM USER MENU --- */
+    .topbar {
+      backdrop-filter: blur(16px);
+      background: rgba(8, 13, 23, 0.85) !important;
+      padding: 0.8rem 5% !important;
+      border-bottom: 1px solid rgba(255,255,255,0.1) !important;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+
+    .nav a {
+      color: var(--text-muted) !important;
+      font-weight: 600 !important;
+      text-decoration: none;
+      margin-left: 20px;
+      transition: 0.3s ease;
+      text-transform: uppercase;
+      font-size: 13px;
+      letter-spacing: 0.5px;
+    }
+
+    .nav a:hover, .nav a.active {
+      color: var(--accent-color) !important;
+    }
+
+    .nav a.active {
+      border-bottom: 2px solid var(--accent-color);
+      padding-bottom: 5px;
+    }
+
+    /* USER BADGE STYLES */
+    .user-menu {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      border-left: 1px solid rgba(255, 255, 255, 0.1);
+      padding-left: 20px;
+    }
+
+    .user-profile-badge {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 6px 16px 6px 8px;
+      border-radius: 50px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.3s ease;
+    }
+
+    .user-profile-badge:hover {
+      background: rgba(245, 158, 11, 0.1);
+      border-color: var(--accent-color);
+      transform: translateY(-2px);
+    }
+
+    .avatar-circle {
+      width: 32px;
+      height: 32px;
+      background: linear-gradient(135deg, var(--accent-color), #d97706);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      color: #000;
+      box-shadow: 0 0 15px rgba(245, 158, 11, 0.4);
+    }
+
+    .user-text {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .user-tag {
+      font-size: 9px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-weight: 800;
+      letter-spacing: 1px;
+    }
+
+    .user-name {
+      color: var(--accent-color);
+      font-weight: 800;
+      font-size: 14px;
+      line-height: 1.1;
+    }
+
+    .sign-out-btn {
+      color: #f87171;
+      text-decoration: none;
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      padding: 8px 16px;
+      border-radius: 8px;
+      border: 1px solid rgba(248, 113, 113, 0.2);
+      transition: 0.3s;
+    }
+
+    .sign-out-btn:hover {
+      background: rgba(248, 113, 113, 0.1);
+      border-color: #f87171;
+      color: white;
+    }
+
+    /* SEARCH & GRID */
+    .search-container {
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+
+    .search {
+      display: flex;
+      gap: 10px;
+    }
+
+    .search input {
+      flex: 1;
+      border-radius: 50px !important;
+      padding: 14px 25px !important;
+      background: rgba(15, 23, 42, 0.8) !important;
+      border: 1px solid rgba(255,255,255,0.1) !important;
+      color: white;
+      outline: none;
+    }
+
+    .search input:focus {
+      border-color: var(--accent-color) !important;
+    }
+
+    .search button {
+      border-radius: 50px !important;
+      background: var(--accent-color) !important;
+      color: #000 !important;
+      font-weight: 700 !important;
+      padding: 0 30px;
+      border: none;
+      cursor: pointer;
+    }
+
+    .section-title {
+      font-size: 1.5rem !important;
+      color: var(--accent-color) !important;
+      padding-left: 15px !important;
+      border-left: 4px solid var(--accent-color) !important;
+      margin: 50px 5% 20px !important;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-weight: 800;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 25px;
+      padding: 20px 5% 60px;
+    }
+
+    .card {
+      background: var(--glass-bg) !important;
+      border: 1px solid rgba(255,255,255,0.05) !important;
+      border-radius: 16px;
+      overflow: hidden;
+      text-decoration: none;
+      color: white;
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+
+    .card:hover {
+      transform: translateY(-10px);
+      border-color: var(--accent-color) !important;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.4) !important;
+    }
+
+    .card img {
+      width: 100%;
+      aspect-ratio: 2/3;
+      object-fit: cover;
+    }
+
+    .badge-new {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: var(--accent-color) !important;
+      color: #000 !important;
+      border-radius: 4px !important;
+      font-weight: 900 !important;
+      padding: 4px 8px;
+      font-size: 10px;
+    }
+
+    .card-content {
+      padding: 15px;
+      flex-grow: 1;
+    }
+
+    .title {
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: white;
+      margin-bottom: 8px;
+      line-height: 1.3;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .meta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.85rem;
+    }
+
+    .star { color: var(--accent-color); }
+    .votes { color: var(--text-muted); }
+
+    .reason-tag {
+      background: rgba(245, 158, 11, 0.1);
+      color: var(--accent-color);
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 11px;
+      margin-top: 10px;
+      display: inline-block;
+      font-style: italic;
+    }
+
+    .your-rating {
+      font-size: 11px;
+      color: #34d399;
+      margin-top: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="topbar">
+    <div style="display:flex; align-items:center;">
+      <h2 style="margin:0; color:var(--accent-color); font-weight: 800; letter-spacing: -1px;">🎬 MOVIERECS</h2>
+      <div class="nav" style="margin-left: 30px; display: flex;">
+        <a href="/home/{{user_id}}" class="active">Homepage</a>
+        <a href="/recs/{{user_id}}/hybrid">Hybrid Recommendation</a>
+        <a href="/recs/{{user_id}}/cf">Collaborative Filtering</a>
+        <a href="/admin/{{user_id}}" style="color:#f87171 !important; opacity: 0.8;">Management</a>
+      </div>
+    </div>
+
+    <div class="user-menu">
+      <a href="/profile/{{user_id}}" class="user-profile-badge">
+        <div class="avatar-circle">
+          <span>👤</span>
+        </div>
+        <div class="user-text">
+          <span class="user-tag">Profile</span>
+          <span class="user-name">{{username}}</span>
+        </div>
+      </a>
+      <a href="/logout" class="sign-out-btn">Sign Out</a>
+    </div>
+  </div>
+
+  <div class="search-container">
+    <form class="search" method="get" action="/search/{{user_id}}">
+      <input name="q" value="{{q}}" placeholder="Discover movies, genres or actors...">
+      <button type="submit">Search</button>
+      {% if is_search %}
+        <a href="/home/{{user_id}}" style="background: #334155; color: white; border-radius: 50px; padding: 12px 20px; text-decoration: none; font-size: 14px; display: flex; align-items: center;">Clear</a>
+      {% endif %}
+    </form>
+  </div>
+
+  <div style="padding: 0 5%;">
+
+    {% if latest %}
+      <div class="section-title">✨ New Arrivals</div>
+      <div class="grid">
+        {% for m in latest %}
+          <a class="card" href="/movie/{{user_id}}/{{m.movieId}}">
+            <div class="poster-wrapper" style="position:relative;">
+              {% if m.is_new %}<div class="badge-new">NEW</div>{% endif %}
+              {% if m.poster %}<img src="{{m.poster}}" alt="{{m.title}}">{% else %}<div style="aspect-ratio: 2/3; background: #1a2436; display: flex; justify-content: center; align-items: center; color: #64748b; font-size: 14px;">No Preview</div>{% endif %}
+            </div>
+            <div class="card-content">
+              <div class="title" title="{{m.title}}">{{m.title}}</div>
+              <div class="meta">
+                <span class="star">★ {{ "%.1f"|format(m.avg_rating|default(0.0)) }}</span>
+                <span class="votes">({{m.rating_count|default(0)}} votes)</span>
+              </div>
+              {% if m.your_rating %}
+                <div class="your-rating">Your Rating: {{m.your_rating}}</div>
+              {% endif %}
+            </div>
+          </a>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    {% if hybrid and hybrid|length > 0 %}
+      <div class="section-title">🔥 Personalized For You</div>
+      <div class="grid">
+        {% for m in hybrid %}
+          <a class="card" href="/movie/{{user_id}}/{{m.movieId}}">
+            <div class="poster-wrapper" style="position:relative;">
+              {% if m.is_new %} <div class="badge-new">NEW</div> {% endif %}
+              {% if m.poster %}<img src="{{m.poster}}" alt="{{m.title}}">{% else %}<div style="aspect-ratio: 2/3; background: #1a2436; display: flex; justify-content: center; align-items: center; color: #64748b; font-size: 14px;">No Preview</div>{% endif %}
+            </div>
+            <div class="card-content">
+              <div class="title" title="{{m.title}}">{{m.title}}</div>
+              <div class="meta">
+                <span class="star">★ {{ "%.1f"|format(m.avg_rating|default(0.0)) }}</span>
+                <span class="votes">({{m.rating_count|default(0)}} votes)</span>
+              </div>
+              {% if m.reason %}
+                <div class="reason-tag">{{m.reason}}</div>
+              {% endif %}
+            </div>
+          </a>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <div class="section-title">
+      {% if is_search %} 🔍 Matches For "{{q}}" {% else %} 🏆 Global Trending {% endif %}
+    </div>
+
+    <div class="grid">
+      {% for m in popular %}
+        <a class="card" href="/movie/{{user_id}}/{{m.movieId}}">
+          <div class="poster-wrapper" style="position:relative;">
+            {% if m.is_new %} <div class="badge-new">NEW</div> {% endif %}
+            {% if m.poster %}<img src="{{m.poster}}" alt="{{m.title}}">{% else %}<div style="aspect-ratio: 2/3; background: #1a2436; display: flex; justify-content: center; align-items: center; color: #64748b; font-size: 14px;">No Preview</div>{% endif %}
+          </div>
+          <div class="card-content">
+            <div class="title" title="{{m.title}}">{{m.title}}</div>
+            <div class="meta">
+              <span class="star">★ {{ "%.1f"|format(m.avg_rating|default(0.0)) }}</span>
+              <span class="votes">({{m.rating_count|default(0)}})</span>
+              {% if m.your_rating %}
+                <span style="margin-left:auto; color:#34d399; font-weight: 700; font-size: 10px;">RATED</span>
+              {% endif %}
+            </div>
+          </div>
+        </a>
+      {% endfor %}
+    </div>
+
+  </div>
+
+  <div style="text-align: center; padding: 60px 0; opacity: 0.3; font-size: 12px; letter-spacing: 2px;">
+    POWERED BY HYBRID AI ENGINE
+  </div>
+
+</body>
+</html>

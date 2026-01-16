@@ -1,0 +1,11 @@
+
+.venv/
+venv/
+__pycache__/
+.idea/
+.DS_Store
+*.ipynb_checkpoints
+
+saved_models/movie_movie_cosine_sim.pkl
+saved_models/user_profiles_scb.pkl
+

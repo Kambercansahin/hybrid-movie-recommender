@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>{{ movie.title }} - MovieRecs</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <style>
+    /* Temel Ayarlar */
+    body { background-color: #111827; color: white; margin: 0; padding: 0; font-family: sans-serif; }
+    .topbar { background-color: #1f2937; padding: 10px 40px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #374151; }
+    .nav-links a { color: #fbbf24; text-decoration: none; margin-right: 20px; font-weight: bold; font-size: 0.9rem; }
+    .back-btn { background: #374151; padding: 5px 15px; border-radius: 5px; color: white !important; }
+
+    /* Film Detay Alanı */
+    .movie-page-container { display: flex; gap: 40px; padding: 30px; background: #1f2937; border-radius: 15px; margin: 20px auto; max-width: 1100px; }
+    .poster-box img.poster-main { width: 260px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); object-fit: cover; }
+    .movie-details-info h2 { font-size: 2.2rem; color: #fbbf24; margin-top: 0; }
+    .rating-summary { font-size: 1.1rem; color: #fbbf24; margin-bottom: 20px; }
+
+    /* Özet Alanı */
+    .overview-section h3 { border-bottom: 1px solid #4b5563; padding-bottom: 8px; margin-top: 0; font-size: 1.2rem; }
+    .overview-text { line-height: 1.5; color: #d1d5db; margin-bottom: 25px; font-size: 0.95rem; }
+
+    /* Oylama Kutusu */
+    .rating-box { background: #111827; padding: 15px; border-radius: 10px; margin-top: 15px; }
+    .stars { display: flex; flex-direction: row-reverse; justify-content: flex-end; gap: 5px; margin-bottom: 10px; }
+    .stars input { display: none; }
+    .stars label { font-size: 30px; color: #4b5563; cursor: pointer; transition: color 0.2s ease; }
+    .stars input:checked ~ label, .stars label:hover, .stars label:hover ~ label { color: #fbbf24; }
+    .submit-btn { background: #fbbf24; color: black; border: none; padding: 8px 18px; border-radius: 5px; font-weight: bold; cursor: pointer; }
+
+    /* Alt Kısımdaki Öneriler - STANDART KART YAPISI */
+    .recommendations-title { margin: 30px 40px 10px 40px; padding-left: 12px; border-left: 4px solid #fbbf24; font-size: 1.3rem; }
+    .movie-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 20px; padding: 0 40px 40px 40px; }
+    .movie-card { background: #1f2937; border-radius: 10px; overflow: hidden; text-decoration: none; color: white; transition: transform 0.3s ease; display: flex; flex-direction: column; height: 100%; }
+    .movie-card:hover { transform: translateY(-5px); }
+    .movie-card img { width: 100%; aspect-ratio: 2/3; object-fit: cover; }
+    .card-info { padding: 10px; flex-grow: 1; }
+    .card-title { font-weight: bold; font-size: 0.85rem; display: block; height: 35px; overflow: hidden; line-height: 1.2; margin-bottom: 5px; }
+    .card-stats { display: flex; align-items: center; gap: 6px; }
+    .card-rating { color: #fbbf24; font-size: 0.8rem; font-weight: bold; }
+    .card-votes { color: #9ca3af; font-size: 0.7rem; }
+  </style>
+</head>
+<body>
+
+  <div class="topbar">
+    <div class="nav-links">
+      <a href="/home/{{user_id}}" class="back-btn">← Homepage</a>
+      <a href="/recs/{{user_id}}/hybrid" style="color:#fbbf24; text-decoration:none;">Hybrid Recommendation</a>
+    </div>
+    <div class="user-menu">
+      <span style="color:#9ca3af; margin-right: 15px; font-size: 0.9rem;">👤 {{username}}</span>
+      <a href="/logout" style="color:#ef4444; text-decoration:none; font-weight: bold; font-size: 0.9rem;">Logout</a>
+    </div>
+  </div>
+
+  {% if movie %}
+    <div class="movie-page-container">
+      <div class="poster-box">
+        <img class="poster-main" src="{{ movie.poster if movie.poster else 'https://via.placeholder.com/260x390?text=No+Poster' }}" alt="{{ movie.title }}">
+      </div>
+
+      <div class="movie-details-info">
+        <h2>{{movie.title}}</h2>
+        <div class="rating-summary">
+          ⭐ {{ "%.1f"|format(movie.avg_rating|default(0.0)) }}
+          <span style="color:#9ca3af; font-size:0.8rem;">({{movie.rating_count}} votes)</span>
+          {% if movie.your_rating %}
+            <span style="margin-left:12px; color:#34d399; font-size:0.9rem;">Your Rating: {{movie.your_rating}}</span>
+          {% endif %}
+        </div>
+
+        <div class="overview-section">
+            <h3>Overview</h3>
+            <p class="overview-text">{{movie.overview}}</p>
+        </div>
+
+        <div class="rating-box">
+          <h4 style="margin-top:0; font-size: 1rem;">Rate this movie</h4>
+          <form method="post" action="/rate/{{user_id}}/{{movie.movieId}}">
+            <div class="stars">
+              {% for i in range(5, 0, -1) %}
+                <input type="radio" id="star{{i}}" name="rating" value="{{i}}"
+                       {% if movie.your_rating == i %}checked{% endif %} required>
+                <label for="star{{i}}">★</label>
+              {% endfor %}
+            </div>
+            <button type="submit" class="submit-btn">Submit Rating</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <h3 class="recommendations-title">Similar Movies</h3>
+    <div class="movie-grid">
+      {% for m in recs %}
+        <a class="movie-card" href="/movie/{{user_id}}/{{m.movieId}}">
+          <img src="{{ m.poster if m.poster else 'https://via.placeholder.com/150x220?text=No+Poster' }}" alt="{{m.title}}">
+          <div class="card-info">
+            <span class="card-title">{{m.title}}</span>
+            <div class="card-stats">
+              <span class="card-rating">⭐ {{ "%.1f"|format(m.avg_rating|default(0.0)) }}</span>
+              <span class="card-votes">({{m.rating_count}})</span>
+            </div>
+          </div>
+        </a>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div style="text-align:center; padding:50px;">
+        <h3>Movie not found.</h3>
+        <a href="/home/{{user_id}}" style="color:#fbbf24;">Back to Homepage</a>
+    </div>
+  {% endif %}
+
+</body>
+</html>

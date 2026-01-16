@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Panel - Movie RecSys</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        body { background-color: #111827; color: white; font-family: sans-serif; }
+        .nav-links { padding: 20px; background: #1f2937; border-bottom: 1px solid #374151; }
+        .nav-links a { color: #fbbf24; text-decoration: none; font-weight: bold; }
+
+        .container { display: flex; justify-content: center; padding: 20px; }
+        .admin-card { width: 100%; max-width: 600px; background: #1f2937; padding: 30px; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
+
+        label { display: block; margin-top: 15px; margin-bottom: 5px; color: #d1d5db; font-weight: bold; font-size: 14px; }
+        input, textarea {
+            width: 100%; padding: 12px; border-radius: 6px; border: 1px solid #374151;
+            background: #111827; color: white; box-sizing: border-box; margin-bottom: 10px;
+        }
+        input:focus, textarea:focus { border-color: #fbbf24; outline: none; }
+
+        .success-msg {
+            background: #064e3b; color: #34d399; padding: 15px; border-radius: 8px;
+            margin-bottom: 25px; border: 1px solid #059669; font-weight: bold;
+            display: flex; align-items: center; gap: 10px;
+        }
+    </style>
+</head>
+<body>
+
+   <div class="nav-links">
+    {% if user_id %}
+        <a href="/home/{{user_id}}">⬅️ Back to Home</a>
+    {% else %}
+        <a href="/">Login Page</a>
+    {% endif %}
+</div>
+
+    <div class="container">
+        <div class="admin-card">
+            <h2 style="color:#fbbf24; border-bottom: 2px solid #374151; padding-bottom:10px; margin-top:0;">🎥 Add New Movie</h2>
+            <p style="color:#9ca3af; font-size:14px; margin-bottom:20px;">
+
+            </p>
+
+            {% set msg = request.query_params.get('msg') %}
+            {% if msg %}
+            <div class="success-msg">
+                <span>✅</span> {{ msg }}
+            </div>
+            {% endif %}
+
+            <form method="post" action="/admin/add_movie" class="form">
+                <input type="hidden" name="current_user_id" value="{{ user_id }}">
+
+                <label>Movie Title (Year)</label>
+                <input name="title" placeholder="" required>
+
+                <label>Genres (Separated by |)</label>
+                <input name="genres" placeholder="e.g. Adventure|Animation|Comedy" required>
+
+                <label>Overview (Description)</label>
+                <textarea name="overview" rows="6" placeholder="" required></textarea>
+
+                <button type="submit" style="width:100%; background: #fbbf24; color: black; font-weight: bold; padding: 14px; border:none; border-radius:5px; cursor:pointer; font-size: 16px; margin-top: 10px;">
+                    🚀 Add Movie & Retrain System
+                </button>
+            </form>
+        </div>
+    </div>
+
+</body>
+</html>
