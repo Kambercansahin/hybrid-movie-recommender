@@ -151,7 +151,7 @@ Admins can add new movies via the web interface.
 
 1.  **Clone Repository**
     ```bash
-    git clone [https://github.com/kambercansahin/hybrid-movie-recommender.git](https://github.com/kambercansahin/hybrid-movie-recommender.git)
+    git clone https://github.com/kambercansahin/hybrid-movie-recommender.git
     cd hybrid-movie-recommender
     ```
 
